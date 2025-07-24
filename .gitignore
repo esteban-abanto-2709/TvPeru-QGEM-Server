@@ -99,7 +99,7 @@ Thumbs.db
 
 # Data folder (archivos JSON generados)
 data/
-*.json
+data/*.json
 
 # Backup files
 *.bak
