@@ -22,11 +22,11 @@ app.use((req, res, next) => {
 });
 
 
-async function subirADropbox(contenido, nombreEnDropbox) {
+async function subirADropbox(content, nameFile) {
   try {
     const response = await dropbox.filesUpload({
-      path: '/' + nombreEnDropbox,
-      contents: contenido,
+      path: '/CurrentData/' + nameFile,
+      contents: content,
       mode: 'overwrite'
     });
     console.log('✅ Subido a Dropbox:', response.result.path_display);
@@ -36,14 +36,18 @@ async function subirADropbox(contenido, nombreEnDropbox) {
 }
 
 // Endpoint para recibir los datos del Google Sheet
-app.post('/api/save-data', async (req, res) => {
+app.post('/api/save-data/:filename', async (req, res) => {
   try {
-    console.log('📥 Datos recibidos del Google Sheet:');
-    console.log(JSON.stringify(req.body, null, 2));
+    const { filename } = req.params;
     
-    const filename = `DeletreoData.json`;
+    if (!filename || !filename.endsWith('.json')) {
+      return res.status(400).json({
+        success: false,
+        message: 'El nombre del archivo debe terminar en ".json"',
+      });
+    }
+
     const content = JSON.stringify(req.body, null, 2);
-    
     await subirADropbox(content, filename);
     
     res.status(200).json({
