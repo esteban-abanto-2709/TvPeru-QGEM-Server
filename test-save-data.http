@@ -3,16 +3,31 @@ POST http://localhost:3000/api/save-data
 Content-Type: application/json
 
 {
-  "generatedAt": "2025-07-24T20:00:00Z",
+  "generatedAt": "2025-07-24T19:42:36.984Z",
   "groups": [
     {
-      "words": ["manzana", "plátano", "pera"]
+      "words": [
+        "regla",
+        "borrador",
+        "lapiz",
+        "cartuchera",
+        "silla"
+      ]
     },
     {
-      "words": ["lunes", "martes", "miércoles"]
+      "words": [
+        "azul",
+        "rojo",
+        "verde",
+        "amarillo"
+      ]
     },
     {
-      "words": ["nadar", "leer", "escribir"]
+      "words": [
+        "correr",
+        "saltar",
+        "caminar"
+      ]
     }
   ]
 }
