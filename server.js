@@ -8,10 +8,13 @@ console.log('🔑 Dropbox Token cargado:', DROPBOX_TOKEN ? '✅ OK' : '❌ Falta
 const dropbox = new Dropbox({ accessToken: DROPBOX_TOKEN });
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+// Middleware para servir archivos estáticos
+app.use(express.static('public'));
 
 // Middleware para CORS (permitir requests desde Google Apps Script)
 app.use((req, res, next) => {
@@ -21,6 +24,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Página principal para mantener el servidor activo
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// Endpoint para recibir los datos del Google Sheet
 async function subirADropbox(content, nameFile) {
   try {
 
@@ -74,8 +83,8 @@ app.post('/api/save-data/:filename', async (req, res) => {
     // Verificar que el content no tenga caracteres problemáticos
     const cleanContent = content.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
 
-    if (cleanContent == content) {
-      console.log('No se encontraron caracteres problemáticos en el contenido.');
+    if (cleanContent !== content) {
+      console.log('⚠️ Se encontraron caracteres problemáticos en el contenido.');
     }
 
     await subirADropbox(content, filename);
@@ -97,28 +106,64 @@ app.post('/api/save-data/:filename', async (req, res) => {
   }
 });
 
-app.get('/api/dropbox-check', async (req, res) => {
+// Health check unificado - verifica servidor Y Dropbox
+app.get('/api/health', async (req, res) => {
   try {
+    // Verificar conexión con Dropbox
     const account = await dropbox.usersGetCurrentAccount();
-    res.json({ success: true, account });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
-// Endpoint para verificar que el servidor funciona
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'Servidor funcionando correctamente',
-    timestamp: new Date().toISOString()
-  });
+    res.json({
+      success: true,
+      server: {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      },
+      dropbox: {
+        connected: true,
+        account: {
+          account_id: account.result.account_id,
+          name: account.result.name,
+          email: account.result.email
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error en health check:', error);
+    res.status(500).json({
+      success: false,
+      server: {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      },
+      dropbox: {
+        connected: false,
+        error: error.message
+      }
+    });
+  }
 });
 
 // Iniciar el servidor
 app.listen(PORT, () => {
+  // Detectar el entorno y construir la URL base
+  const isRender = process.env.RENDER;
+  const renderUrl = process.env.RENDER_EXTERNAL_URL;
+  
+  let baseUrl;
+  if (isRender && renderUrl) {
+    baseUrl = renderUrl;
+  } else if (process.env.NODE_ENV === 'production') {
+    baseUrl = `https://tu-app-render.onrender.com`; // Cambiar por tu URL real
+  } else {
+    baseUrl = `http://localhost:${PORT}`;
+  }
+
   console.log('🚀 Servidor iniciado correctamente');
-  console.log(`📡 Escuchando en: http://localhost:${PORT}`);
-  console.log(`🔗 Endpoint para datos: http://localhost:${PORT}/api/save-data`);
-  console.log(`❤️  Health check: http://localhost:${PORT}/api/health`);
+  console.log(`📡 Escuchando en puerto: ${PORT}`);
+  console.log(`🌐 Página principal: ${baseUrl}`);
+  console.log(`🔗 Endpoint para datos: ${baseUrl}/api/save-data`);
+  console.log(`❤️  Health check: ${baseUrl}/api/health`);
 });

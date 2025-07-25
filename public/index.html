@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropbox API Server</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .status { 
+            display: inline-block;
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            margin: 10px 0;
+        }
+        .status.loading { background-color: #ffc107; color: #000; }
+        .status.success { background-color: #28a745; }
+        .status.error { background-color: #dc3545; }
+        .endpoint {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .loading { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Dropbox API Server</h1>
+        
+        <div id="server-status">
+            <h3>📡 Estado del Servidor:</h3>
+            <div class="status loading loading">🔄 Verificando conexiones...</div>
+        </div>
+
+        <div id="dropbox-status">
+            <h3>☁️ Estado de Dropbox:</h3>
+            <div class="status loading loading">🔄 Conectando...</div>
+        </div>
+
+        <div id="endpoints" style="display: none;">
+            <h3>🔗 Endpoints Disponibles:</h3>
+            <div class="endpoint">
+                <strong>POST</strong> /api/save-data/:filename<br>
+                <small>Guarda datos JSON en Dropbox</small>
+            </div>
+            <div class="endpoint">
+                <strong>GET</strong> /api/health<br>
+                <small>Verifica el estado del servidor y Dropbox</small>
+            </div>
+        </div>
+
+        <div id="ready-message" style="display: none; text-align: center; margin-top: 30px;">
+            <h2>✅ ¡Sistema Listo!</h2>
+            <p>El servidor está funcionando correctamente y conectado a Dropbox.</p>
+            <p>Puedes usar los endpoints de la API.</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkServerHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                const serverStatus = document.getElementById('server-status').querySelector('.status');
+                const dropboxStatus = document.getElementById('dropbox-status').querySelector('.status');
+                
+                if (data.success) {
+                    serverStatus.className = 'status success';
+                    serverStatus.textContent = '✅ Servidor activo';
+                    
+                    if (data.dropbox.connected) {
+                        dropboxStatus.className = 'status success';
+                        dropboxStatus.textContent = `✅ Conectado (${data.dropbox.account.name.display_name})`;
+                    } else {
+                        dropboxStatus.className = 'status error';
+                        dropboxStatus.textContent = '❌ Error de conexión';
+                    }
+                    
+                    if (data.dropbox.connected) {
+                        document.getElementById('endpoints').style.display = 'block';
+                        document.getElementById('ready-message').style.display = 'block';
+                    }
+                } else {
+                    serverStatus.className = 'status error';
+                    serverStatus.textContent = '❌ Error del servidor';
+                    dropboxStatus.className = 'status error';
+                    dropboxStatus.textContent = '❌ Sin conexión';
+                }
+            } catch (error) {
+                document.getElementById('server-status').querySelector('.status').className = 'status error';
+                document.getElementById('server-status').querySelector('.status').textContent = '❌ Sin respuesta';
+            }
+        }
+
+        // Verificar estado al cargar la página
+        checkServerHealth();
+        
+        // Verificar cada 30 segundos para mantener activo
+        setInterval(checkServerHealth, 30000);
+    </script>
+</body>
+</html>
