@@ -3,7 +3,7 @@ const { Dropbox } = require('dropbox');
 require('dotenv').config();
 
 const DROPBOX_TOKEN = process.env.DROPBOX_TOKEN;
-console.log('🔑 Dropbox Token: ', DROPBOX_TOKEN);
+console.log('🔑 Dropbox Token cargado:', DROPBOX_TOKEN ? '✅ OK' : '❌ Faltante');
 
 const dropbox = new Dropbox({ accessToken: DROPBOX_TOKEN });
 
@@ -21,16 +21,26 @@ app.use((req, res, next) => {
   next();
 });
 
-
 async function subirADropbox(content, nameFile) {
   try {
+
+    console.log('🔄 Intentando subir a Dropbox...');
+    console.log('📁 Archivo:', nameFile);
+    console.log('📊 Tamaño:', content.length, 'caracteres');
+
+    const buffer = Buffer.from(content, 'utf8');
+    console.log('🔄 Buffer creado, tamaño:', buffer.length);
+
     const response = await dropbox.filesUpload({
       path: '/CurrentData/' + nameFile,
-      contents: content,
+      contents: buffer,
       mode: 'overwrite'
     });
+
     console.log('✅ Subido a Dropbox:', response.result.path_display);
+
   } catch (error) {
+
     console.error('❌ Error al subir a Dropbox:', error);
   }
 }
@@ -39,7 +49,11 @@ async function subirADropbox(content, nameFile) {
 app.post('/api/save-data/:filename', async (req, res) => {
   try {
     const { filename } = req.params;
-    
+
+    // Log para debug
+    console.log('📨 Request recibida desde:', req.headers['user-agent']);
+    console.log('📦 Tamaño del body:', JSON.stringify(req.body).length);
+
     if (!filename || !filename.endsWith('.json')) {
       return res.status(400).json({
         success: false,
@@ -47,16 +61,32 @@ app.post('/api/save-data/:filename', async (req, res) => {
       });
     }
 
+    // Validar que el body no esté vacío y sea válido
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'El cuerpo de la petición está vacío'
+      });
+    }
+
     const content = JSON.stringify(req.body, null, 2);
+
+    // Verificar que el content no tenga caracteres problemáticos
+    const cleanContent = content.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+
+    if (cleanContent == content) {
+      console.log('No se encontraron caracteres problemáticos en el contenido.');
+    }
+
     await subirADropbox(content, filename);
-    
+
     res.status(200).json({
       success: true,
       message: 'Datos guardados correctamente',
       filename: filename,
       timestamp: new Date().toISOString()
     });
-    
+
   } catch (error) {
     console.error('❌ Error guardando datos:', error);
     res.status(500).json({
@@ -64,6 +94,15 @@ app.post('/api/save-data/:filename', async (req, res) => {
       message: 'Error interno del servidor',
       error: error.message
     });
+  }
+});
+
+app.get('/api/dropbox-check', async (req, res) => {
+  try {
+    const account = await dropbox.usersGetCurrentAccount();
+    res.json({ success: true, account });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
