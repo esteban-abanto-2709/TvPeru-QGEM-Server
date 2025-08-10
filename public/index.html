@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dropbox API Server</title>
+    <title>Que Gane El Mejor</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -49,15 +49,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚀 Dropbox API Server</h1>
+        <h1>Que Gane El Mejor</h1>
         
         <div id="server-status">
             <h3>📡 Estado del Servidor:</h3>
             <div class="status loading loading">🔄 Verificando conexiones...</div>
         </div>
 
-        <div id="dropbox-status">
-            <h3>☁️ Estado de Dropbox:</h3>
+        <div id="database-status">
+            <h3>🗄️ Estado de MongoDB:</h3>
             <div class="status loading loading">🔄 Conectando...</div>
         </div>
 
@@ -65,18 +65,30 @@
             <h3>🔗 Endpoints Disponibles:</h3>
             <div class="endpoint">
                 <strong>POST</strong> /api/save-data/:filename<br>
-                <small>Guarda datos JSON en Dropbox</small>
+                <small>Guarda datos JSON en MongoDB</small>
+            </div>
+            <div class="endpoint">
+                <strong>GET</strong> /api/load-data/:filename<br>
+                <small>Carga datos JSON desde MongoDB</small>
+            </div>
+            <div class="endpoint">
+                <strong>GET</strong> /api/list-files<br>
+                <small>Lista todos los archivos JSON guardados</small>
+            </div>
+            <div class="endpoint">
+                <strong>DELETE</strong> /api/delete-data/:filename<br>
+                <small>Elimina un archivo JSON específico</small>
             </div>
             <div class="endpoint">
                 <strong>GET</strong> /api/health<br>
-                <small>Verifica el estado del servidor y Dropbox</small>
+                <small>Verifica el estado del servidor y MongoDB</small>
             </div>
         </div>
 
         <div id="ready-message" style="display: none; text-align: center; margin-top: 30px;">
             <h2>✅ ¡Sistema Listo!</h2>
-            <p>El servidor está funcionando correctamente y conectado a Dropbox.</p>
-            <p>Puedes usar los endpoints de la API.</p>
+            <p>El servidor está funcionando correctamente y conectado a MongoDB.</p>
+            <p>Puedes usar los endpoints de la API para guardar y cargar archivos JSON.</p>
         </div>
     </div>
 
@@ -87,33 +99,36 @@
                 const data = await response.json();
                 
                 const serverStatus = document.getElementById('server-status').querySelector('.status');
-                const dropboxStatus = document.getElementById('dropbox-status').querySelector('.status');
+                const databaseStatus = document.getElementById('database-status').querySelector('.status');
                 
                 if (data.success) {
                     serverStatus.className = 'status success';
                     serverStatus.textContent = '✅ Servidor activo';
                     
-                    if (data.dropbox.connected) {
-                        dropboxStatus.className = 'status success';
-                        dropboxStatus.textContent = `✅ Conectado (${data.dropbox.account.name.display_name})`;
+                    if (data.database && data.database.connected) {
+                        databaseStatus.className = 'status success';
+                        databaseStatus.textContent = '✅ MongoDB conectado';
                     } else {
-                        dropboxStatus.className = 'status error';
-                        dropboxStatus.textContent = '❌ Error de conexión';
+                        databaseStatus.className = 'status error';
+                        databaseStatus.textContent = '❌ Error de conexión a MongoDB';
                     }
                     
-                    if (data.dropbox.connected) {
+                    if (data.database && data.database.connected) {
                         document.getElementById('endpoints').style.display = 'block';
                         document.getElementById('ready-message').style.display = 'block';
                     }
                 } else {
                     serverStatus.className = 'status error';
                     serverStatus.textContent = '❌ Error del servidor';
-                    dropboxStatus.className = 'status error';
-                    dropboxStatus.textContent = '❌ Sin conexión';
+                    databaseStatus.className = 'status error';
+                    databaseStatus.textContent = '❌ Sin conexión';
                 }
             } catch (error) {
                 document.getElementById('server-status').querySelector('.status').className = 'status error';
                 document.getElementById('server-status').querySelector('.status').textContent = '❌ Sin respuesta';
+                
+                document.getElementById('database-status').querySelector('.status').className = 'status error';
+                document.getElementById('database-status').querySelector('.status').textContent = '❌ Sin conexión';
             }
         }
 
