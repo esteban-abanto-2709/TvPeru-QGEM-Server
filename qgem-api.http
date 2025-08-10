@@ -1,0 +1,123 @@
+### QGEM App Center - Pruebas de API
+### TV Perú - "Que Gane El Mejor"
+
+### 1. Estado del servidor
+GET http://localhost:3000/api/health
+Accept: application/json
+
+###
+
+### 2. Guardar datos del día - Deletreo
+POST http://localhost:3000/api/save-data/deletreo-hoy.json
+Content-Type: application/json
+
+{
+  "gameType": "deletreo",
+  "programDate": "2025-08-10",
+  "episode": 156,
+  "groups": [
+    {
+      "level": "básico",
+      "words": ["casa", "mesa", "silla", "perro", "gato"]
+    },
+    {
+      "level": "intermedio", 
+      "words": ["escritorio", "computadora", "televisión"]
+    },
+    {
+      "level": "avanzado",
+      "words": ["extraordinario", "magnificencia", "perseverancia"]
+    }
+  ]
+}
+
+###
+
+### 3. Guardar datos del día - Operaciones Combinadas
+POST http://localhost:3000/api/save-data/operaciones-hoy.json
+Content-Type: application/json
+
+{
+  "gameType": "operaciones-combinadas",
+  "programDate": "2025-08-10", 
+  "episode": 156,
+  "problems": [
+    {
+      "expression": "15 + 8 × 3",
+      "answer": 39
+    },
+    {
+      "expression": "(20 + 4) ÷ 6", 
+      "answer": 4
+    },
+    {
+      "expression": "50 - 12 + 7",
+      "answer": 45
+    }
+  ]
+}
+
+###
+
+### 4. Guardar datos del día - Tres en Raya
+POST http://localhost:3000/api/save-data/tresenraya-hoy.json
+Content-Type: application/json
+
+{
+  "gameType": "tres-en-raya",
+  "programDate": "2025-08-10",
+  "episode": 156,
+  "questions": [
+    {
+      "category": "Historia",
+      "question": "¿En qué año se fundó Lima?",
+      "answer": "1535"
+    },
+    {
+      "category": "Geografía", 
+      "question": "¿Cuál es la capital de Arequipa?",
+      "answer": "Arequipa"
+    },
+    {
+      "category": "Ciencias",
+      "question": "¿Cuál es el símbolo químico del oro?",
+      "answer": "Au"
+    }
+  ]
+}
+
+###
+
+### 5. Cargar datos - Deletreo
+GET http://localhost:3000/api/load-data/deletreo-hoy.json
+Accept: application/json
+
+###
+
+### 6. Cargar datos - Operaciones
+GET http://localhost:3000/api/load-data/operaciones-hoy.json
+Accept: application/json
+
+###
+
+### 7. Ver todos los archivos del día
+GET http://localhost:3000/api/list-files
+Accept: application/json
+
+###
+
+### 8. Eliminar datos de prueba - Deletreo
+DELETE http://localhost:3000/api/delete-data/deletreo-hoy.json
+Accept: application/json
+
+###
+
+### 9. Eliminar datos de prueba - Operaciones
+DELETE http://localhost:3000/api/delete-data/operaciones-hoy.json
+Accept: application/json
+
+###
+
+### 10. Eliminar datos de prueba - Tres en Raya
+DELETE http://localhost:3000/api/delete-data/tresenraya-hoy.json
+Accept: application/json

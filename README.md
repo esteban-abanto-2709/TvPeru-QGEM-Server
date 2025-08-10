@@ -39,26 +39,26 @@
 
 ### Configuración
 
-1. Clona el repositorio:
+1- Clona el repositorio:
 
 ```bash
 git clone https://github.com/tu-usuario/TvPeru-QGEM-AppCenter.git
 cd TvPeru-QGEM-AppCenter
 ```
 
-2. Instala dependencias:
+2- Instala dependencias:
 
 ```bash
 npm install
 ```
 
-3. Configura las variables de entorno:
+3- Configura las variables de entorno:
 
 ```bash
 cp .env.example .env
 ```
 
-4. Edita `.env` con tus datos de MongoDB:
+4- Edita `.env` con tus datos de MongoDB:
 
 ``` env
 MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/qgem_database?retryWrites=true&w=majority

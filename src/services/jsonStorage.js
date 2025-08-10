@@ -1,7 +1,7 @@
 import { getDatabase } from '../config/database.js';
 import { logger } from '../utils/logger.js';
 
-const COLLECTION_NAME = 'json_files';
+const COLLECTION_NAME = 'datos_diarios';
 
 export class JsonStorageService {
 
@@ -12,7 +12,7 @@ export class JsonStorageService {
 
   /**
    * Guarda un archivo JSON en MongoDB
-   * @param {string} filename - Nombre del archivo (ej: "DeletreoData.json")
+   * @param {string} filename - Nombre del archivo
    * @param {Object} jsonData - Datos JSON a guardar
    * @returns {Object} Resultado de la operación
    */
@@ -23,8 +23,6 @@ export class JsonStorageService {
       const document = {
         filename: filename,
         data: jsonData,
-        size: JSON.stringify(jsonData).length,
-        createdAt: new Date(),
         updatedAt: new Date()
       };
 
@@ -35,13 +33,12 @@ export class JsonStorageService {
         { upsert: true }
       );
 
-      logger.info('JsonStorage', `📁 Archivo guardado: ${filename} (${document.size} bytes)`);
+      logger.info('JsonStorage', `📁 Archivo guardado: ${filename}`);
 
       return {
         success: true,
         filename: filename,
         operation: result.upsertedId ? 'created' : 'updated',
-        size: document.size,
         timestamp: document.updatedAt
       };
 
@@ -66,14 +63,12 @@ export class JsonStorageService {
         throw new Error(`Archivo no encontrado: ${filename}`);
       }
 
-      logger.info('JsonStorage', `📂 Archivo cargado: ${filename} (${document.size} bytes)`);
+      logger.info('JsonStorage', `📂 Archivo cargado: ${filename}`);
 
       return {
         success: true,
         filename: filename,
         data: document.data,
-        size: document.size,
-        createdAt: document.createdAt,
         updatedAt: document.updatedAt
       };
 
@@ -94,11 +89,9 @@ export class JsonStorageService {
       const files = await collection.find({}, {
         projection: {
           filename: 1,
-          size: 1,
-          createdAt: 1,
           updatedAt: 1
         }
-      }).toArray();
+      }).sort({ updatedAt: -1 }).toArray();
 
       logger.info('JsonStorage', `📋 Listando ${files.length} archivos`);
 
@@ -106,8 +99,6 @@ export class JsonStorageService {
         success: true,
         files: files.map(f => ({
           filename: f.filename,
-          size: f.size,
-          createdAt: f.createdAt,
           updatedAt: f.updatedAt
         }))
       };
@@ -133,7 +124,7 @@ export class JsonStorageService {
         throw new Error(`Archivo no encontrado: ${filename}`);
       }
 
-      logger.info('JsonStorage', `🗑️ Archivo eliminado: ${filename}`);
+      logger.info('JsonStorage', `🗑️  Archivo eliminado: ${filename}`);
 
       return {
         success: true,
