@@ -62,8 +62,6 @@ cp .env.example .env
 
 ``` env
 MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/qgem_database?retryWrites=true&w=majority
-PORT=3000
-NODE_ENV=production
 ```
 
 5- Inicia el servidor:
