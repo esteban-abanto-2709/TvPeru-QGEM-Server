@@ -38,8 +38,32 @@ router.post('/save-data/:filename', async (req, res) => {
   }
 });
 
-// Cargar archivo JSON
+// Cargar archivo JSON - SOLO DATOS (para Unity/C#)
 router.get('/load-data/:filename', async (req, res) => {
+  try {
+    const { filename } = req.params;
+
+    const result = await JsonStorageService.loadJsonFile(filename);
+
+    // Retornar directamente el contenido del campo 'data'
+    res.json(result.data);
+
+  } catch (error) {
+    if (error.message.includes('no encontrado')) {
+      res.status(404).json({
+        error: `Archivo no encontrado: ${filename}`
+      });
+    } else {
+      logger.error('API', `Error en load-data/${req.params.filename}`, error);
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  }
+});
+
+// Cargar archivo JSON - CON DETALLES (para administración/web)
+router.get('/load-data/details/:filename', async (req, res) => {
   try {
     const { filename } = req.params;
 
@@ -54,7 +78,7 @@ router.get('/load-data/:filename', async (req, res) => {
         error: error.message
       });
     } else {
-      logger.error('API', `Error en load-data/${req.params.filename}`, error);
+      logger.error('API', `Error en load-data/details/${req.params.filename}`, error);
       res.status(500).json({
         success: false,
         error: error.message

@@ -1,14 +1,14 @@
-### QGEM App Center - Pruebas de API
+### QGEM - Pruebas de Sistema
 ### TV Perú - "Que Gane El Mejor"
 
-### 1. Estado del servidor
+### ✅ Estado del servidor
 GET http://localhost:3000/api/health
 Accept: application/json
 
 ###
 
-### 2. Guardar datos del día - Deletreo
-POST http://localhost:3000/api/save-data/deletreo-hoy.json
+### 💾 COLECTOR - Guardar datos del día
+POST http://localhost:3000/api/save-data/DeletreoData.json
 Content-Type: application/json
 
 {
@@ -33,13 +33,37 @@ Content-Type: application/json
 
 ###
 
-### 3. Guardar datos del día - Operaciones Combinadas
-POST http://localhost:3000/api/save-data/operaciones-hoy.json
+### 🎮 UNITY - Cargar datos directos (solo estructura de datos)
+GET http://localhost:3000/api/load-data/DeletreoData.json
+Accept: application/json
+
+###
+
+### 📊 WEB - Cargar datos con detalles (metadatos incluidos)
+GET http://localhost:3000/api/load-data/details/DeletreoData.json
+Accept: application/json
+
+###
+
+### 📁 Ver todos los archivos del día
+GET http://localhost:3000/api/list-files
+Accept: application/json
+
+###
+
+### 🗑️ Limpiar datos de prueba
+DELETE http://localhost:3000/api/delete-data/DeletreoData.json
+Accept: application/json
+
+###
+
+### 💾 Guardar Operaciones Combinadas
+POST http://localhost:3000/api/save-data/OperacionesData.json
 Content-Type: application/json
 
 {
   "gameType": "operaciones-combinadas",
-  "programDate": "2025-08-10", 
+  "programDate": "2025-08-10",
   "episode": 156,
   "problems": [
     {
@@ -59,13 +83,19 @@ Content-Type: application/json
 
 ###
 
-### 4. Guardar datos del día - Tres en Raya
-POST http://localhost:3000/api/save-data/tresenraya-hoy.json
+### 🎮 UNITY - Cargar Operaciones (datos directos)
+GET http://localhost:3000/api/load-data/OperacionesData.json
+Accept: application/json
+
+###
+
+### 💾 Guardar Tres en Raya
+POST http://localhost:3000/api/save-data/TresEnRayaData.json
 Content-Type: application/json
 
 {
   "gameType": "tres-en-raya",
-  "programDate": "2025-08-10",
+  "programDate": "2025-08-10", 
   "episode": 156,
   "questions": [
     {
@@ -74,8 +104,8 @@ Content-Type: application/json
       "answer": "1535"
     },
     {
-      "category": "Geografía", 
-      "question": "¿Cuál es la capital de Arequipa?",
+      "category": "Geografía",
+      "question": "¿Cuál es la capital de Arequipa?", 
       "answer": "Arequipa"
     },
     {
@@ -88,36 +118,6 @@ Content-Type: application/json
 
 ###
 
-### 5. Cargar datos - Deletreo
-GET http://localhost:3000/api/load-data/deletreo-hoy.json
-Accept: application/json
-
-###
-
-### 6. Cargar datos - Operaciones
-GET http://localhost:3000/api/load-data/operaciones-hoy.json
-Accept: application/json
-
-###
-
-### 7. Ver todos los archivos del día
-GET http://localhost:3000/api/list-files
-Accept: application/json
-
-###
-
-### 8. Eliminar datos de prueba - Deletreo
-DELETE http://localhost:3000/api/delete-data/deletreo-hoy.json
-Accept: application/json
-
-###
-
-### 9. Eliminar datos de prueba - Operaciones
-DELETE http://localhost:3000/api/delete-data/operaciones-hoy.json
-Accept: application/json
-
-###
-
-### 10. Eliminar datos de prueba - Tres en Raya
-DELETE http://localhost:3000/api/delete-data/tresenraya-hoy.json
+### 🎮 UNITY - Cargar Tres en Raya (datos directos)
+GET http://localhost:3000/api/load-data/TresEnRayaData.json
 Accept: application/json

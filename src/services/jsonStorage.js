@@ -23,6 +23,7 @@ export class JsonStorageService {
       const document = {
         filename: filename,
         data: jsonData,
+        size: JSON.stringify(jsonData).length,
         updatedAt: new Date()
       };
 
@@ -33,12 +34,13 @@ export class JsonStorageService {
         { upsert: true }
       );
 
-      logger.info('JsonStorage', `📁 Archivo guardado: ${filename}`);
+      logger.info('JsonStorage', `📁 Archivo guardado: ${filename} (${document.size} bytes)`);
 
       return {
         success: true,
         filename: filename,
         operation: result.upsertedId ? 'created' : 'updated',
+        size: document.size,
         timestamp: document.updatedAt
       };
 
@@ -63,12 +65,13 @@ export class JsonStorageService {
         throw new Error(`Archivo no encontrado: ${filename}`);
       }
 
-      logger.info('JsonStorage', `📂 Archivo cargado: ${filename}`);
+      logger.info('JsonStorage', `📂 Archivo cargado: ${filename} (${document.size} bytes)`);
 
       return {
         success: true,
         filename: filename,
         data: document.data,
+        size: document.size,
         updatedAt: document.updatedAt
       };
 
@@ -89,6 +92,7 @@ export class JsonStorageService {
       const files = await collection.find({}, {
         projection: {
           filename: 1,
+          size: 1,
           updatedAt: 1
         }
       }).sort({ updatedAt: -1 }).toArray();
@@ -99,6 +103,7 @@ export class JsonStorageService {
         success: true,
         files: files.map(f => ({
           filename: f.filename,
+          size: f.size,
           updatedAt: f.updatedAt
         }))
       };

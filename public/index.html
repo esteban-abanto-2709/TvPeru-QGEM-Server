@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Que Gane El Mejor</title>
+    <title>QGEM App Center - TV Perú</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            max-width: 800px; 
+            max-width: 900px; 
             margin: 0 auto; 
             padding: 20px; 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -38,7 +38,14 @@
             margin: 10px 0;
             font-family: 'Courier New', monospace;
         }
+        .endpoint-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
         h1 { text-align: center; margin-bottom: 30px; }
+        h4 { margin-top: 0; color: #ffd700; }
         .loading { animation: pulse 2s infinite; }
         @keyframes pulse {
             0% { opacity: 1; }
@@ -49,7 +56,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Que Gane El Mejor</h1>
+        <h1>🎬 QGEM App Center</h1>
+        <p style="text-align: center; font-size: 18px; margin-bottom: 30px;">
+            <strong>TV Perú</strong> - "Que Gane El Mejor"<br>
+            <small>Sistema centralizado de gestión de juegos</small>
+        </p>
         
         <div id="server-status">
             <h3>📡 Estado del Servidor:</h3>
@@ -63,32 +74,49 @@
 
         <div id="endpoints" style="display: none;">
             <h3>🔗 Endpoints Disponibles:</h3>
-            <div class="endpoint">
-                <strong>POST</strong> /api/save-data/:filename<br>
-                <small>Guarda datos JSON en MongoDB</small>
+            
+            <div class="endpoint-group">
+                <h4>🎮 Para Unity/C# (Datos directos)</h4>
+                <div class="endpoint">
+                    <strong>GET</strong> /api/load-data/:filename<br>
+                    <small>Devuelve directamente la estructura de datos (campo 'data' únicamente)</small>
+                </div>
             </div>
-            <div class="endpoint">
-                <strong>GET</strong> /api/load-data/:filename<br>
-                <small>Carga datos JSON desde MongoDB</small>
+
+            <div class="endpoint-group">
+                <h4>💾 Para Colector (Gestión completa)</h4>
+                <div class="endpoint">
+                    <strong>POST</strong> /api/save-data/:filename<br>
+                    <small>Guarda datos JSON en MongoDB</small>
+                </div>
+                <div class="endpoint">
+                    <strong>GET</strong> /api/load-data/details/:filename<br>
+                    <small>Carga datos con metadatos (success, filename, updatedAt)</small>
+                </div>
+                <div class="endpoint">
+                    <strong>GET</strong> /api/list-files<br>
+                    <small>Lista todos los archivos JSON guardados</small>
+                </div>
+                <div class="endpoint">
+                    <strong>DELETE</strong> /api/delete-data/:filename<br>
+                    <small>Elimina un archivo JSON específico</small>
+                </div>
             </div>
-            <div class="endpoint">
-                <strong>GET</strong> /api/list-files<br>
-                <small>Lista todos los archivos JSON guardados</small>
-            </div>
-            <div class="endpoint">
-                <strong>DELETE</strong> /api/delete-data/:filename<br>
-                <small>Elimina un archivo JSON específico</small>
-            </div>
-            <div class="endpoint">
-                <strong>GET</strong> /api/health<br>
-                <small>Verifica el estado del servidor y MongoDB</small>
+
+            <div class="endpoint-group">
+                <h4>🔧 Monitoreo</h4>
+                <div class="endpoint">
+                    <strong>GET</strong> /api/health<br>
+                    <small>Verifica el estado del servidor y MongoDB</small>
+                </div>
             </div>
         </div>
 
         <div id="ready-message" style="display: none; text-align: center; margin-top: 30px;">
             <h2>✅ ¡Sistema Listo!</h2>
-            <p>El servidor está funcionando correctamente y conectado a MongoDB.</p>
-            <p>Puedes usar los endpoints de la API para guardar y cargar archivos JSON.</p>
+            <p>El App Center está funcionando correctamente y conectado a MongoDB.</p>
+            <p><strong>Unity:</strong> Usa <code>/api/load-data/</code> para datos directos</p>
+            <p><strong>Colector:</strong> Usa <code>/api/load-data/details/</code> para gestión completa</p>
         </div>
     </div>
 
