@@ -1,12 +1,28 @@
 {
-  "name": "AppCenter",
+  "name": "tvperu-qgem-appcenter",
   "version": "1.0.0",
-  "description": "Web App Center for tv show",
+  "description": "App Center para el programa 'Que Gane El Mejor' de TV Perú - Sistema centralizado para gestión de juegos y datos",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "tv-peru",
+    "que-gane-el-mejor",
+    "juegos",
+    "game-center",
+    "api",
+    "mongodb",
+    "express"
+  ],
+  "author": "Esteban Abanto",
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BroadStream-Coders/TvPeru-QGEM-DemoPortfolio.git"
   },
   "dependencies": {
     "dotenv": "^17.2.0",
@@ -15,5 +31,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

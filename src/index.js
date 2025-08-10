@@ -12,18 +12,18 @@ async function main() {
       throw new Error(`Invalid port: ${process.env.PORT}. Must be a number between 1 and 65535`);
     }
 
-    logger.info('App', '🚀 Starting Deletreo Server...');
-    logger.info('Config', `Port: ${PORT}`);
-    logger.info('Config', `Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.info('App', '🚀 Iniciando TV Perú - QGEM App Center...');
+    logger.info('Config', `Puerto: ${PORT}`);
 
     await startServer(PORT);
 
-    logger.info('App', '✅ Deletreo Server started successfully!');
-    logger.info('App', `🌐 Server running on http://localhost:${PORT}`);
-    logger.info('App', `📊 Health check: http://localhost:${PORT}/api/health`);
+    logger.info('App', '✅ QGEM App Center iniciado exitosamente!');
+    logger.info('App', `🌐 Servidor ejecutándose en http://localhost:${PORT}`);
+    logger.info('App', `📊 Monitoreo de salud: http://localhost:${PORT}/api/health`);
+    logger.info('App', '🎬 Listo para recibir datos del programa "Que Gane El Mejor"');
 
   } catch (error) {
-    logger.error('App', 'Failed to start application', error);
+    logger.error('App', 'Error al iniciar la aplicación', error);
     process.exit(1);
   }
 }

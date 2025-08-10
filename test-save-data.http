@@ -1,28 +1,40 @@
-### Guardar datos
-POST http://localhost:3000/api/save-data/DeletreoData.json
+### TV Perú - QGEM App Center - Pruebas de API
+
+### 1. Verificar estado del servidor
+GET http://localhost:3000/api/health
+Accept: application/json
+
+### 2. Guardar datos de juego Deletreo
+POST http://localhost:3000/api/save-data/deletreo-2025.json
 Content-Type: application/json
 
 {
-  "generatedAt": "2025-07-24T19:42:36.984Z",
+  "gameType": "deletreo",
+  "generatedAt": "2025-08-10T10:30:00.000Z",
+  "programDate": "2025-08-10",
+  "episode": 156,
   "groups": [
     {
+      "level": "básico",
       "words": [
         "perro",
-        "gato",
-        "lapiz",
+        "gato", 
+        "lápiz",
         "cartuchera",
         "silla"
       ]
     },
     {
+      "level": "intermedio",
       "words": [
         "azul",
         "rojo",
-        "verde",
+        "verde", 
         "amarillo"
       ]
     },
     {
+      "level": "avanzado",
       "words": [
         "correr",
         "saltar",
@@ -32,6 +44,42 @@ Content-Type: application/json
   ]
 }
 
-### Cargar datos
-GET http://localhost:3000/api/load-data/DeletreoData.json
+### 3. Guardar datos de Operaciones Combinadas
+POST http://localhost:3000/api/save-data/operaciones-2025.json
+Content-Type: application/json
+
+{
+  "gameType": "operaciones-combinadas",
+  "generatedAt": "2025-08-10T10:35:00.000Z", 
+  "programDate": "2025-08-10",
+  "episode": 156,
+  "problems": [
+    {
+      "expression": "15 + 8 × 3",
+      "answer": 39,
+      "difficulty": "medio"
+    },
+    {
+      "expression": "(12 + 8) ÷ 4 - 2",
+      "answer": 3,
+      "difficulty": "alto"
+    },
+    {
+      "expression": "25 - 7 + 3",
+      "answer": 21,
+      "difficulty": "básico"
+    }
+  ]
+}
+
+### 4. Cargar datos de Deletreo
+GET http://localhost:3000/api/load-data/deletreo-2025.json
+Accept: application/json
+
+### 5. Listar todos los archivos disponibles
+GET http://localhost:3000/api/list-files
+Accept: application/json
+
+### 6. Eliminar datos de prueba
+DELETE http://localhost:3000/api/delete-data/deletreo-2025.json
 Accept: application/json
