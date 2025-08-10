@@ -1,12 +1,11 @@
 import express from 'express';
 import { logger } from './utils/logger.js';
+import { connectToDatabase, getDatabase } from './config/database.js';
 
 const app = express();
 
-// Middlewares
 app.use(express.json());
 
-// Ruta principal - página simple
 app.get('/', (req, res) => {
   logger.info('Server', 'Home page requested');
 
@@ -49,26 +48,53 @@ app.get('/', (req, res) => {
   `);
 });
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
   logger.info('Server', 'Health check requested');
 
-  res.json({
-    success: true,
-    server: {
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      environment: process.env.NODE_ENV || 'development'
-    }
-  });
+  try {
+    const db = getDatabase();
+    await db.admin().ping();
+
+    res.json({
+      success: true,
+      server: {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development'
+      },
+      database: {
+        connected: true,
+        status: 'OK'
+      }
+    });
+  } catch (error) {
+    logger.error('Server', 'Database connection failed in health check', error);
+    res.json({
+      success: true,
+      server: {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development'
+      },
+      database: {
+        connected: false,
+        status: 'ERROR',
+        error: error.message
+      }
+    });
+  }
 });
 
 export async function startServer(port) {
-  return new Promise((resolve, reject) => {
-    try {
+  try {
+    logger.info('Server', '🔄 Iniciando conexiones...');
+    await connectToDatabase();
+
+    return new Promise((resolve, reject) => {
       const server = app.listen(port, () => {
-        logger.info('Server', `Server listening on port ${port}`);
+        logger.info('Server', `✅ Server listening on port ${port}`);
         resolve(server);
       });
 
@@ -76,10 +102,10 @@ export async function startServer(port) {
         logger.error('Server', 'Failed to start server', error);
         reject(error);
       });
+    });
 
-    } catch (error) {
-      logger.error('Server', 'Error creating server', error);
-      reject(error);
-    }
-  });
+  } catch (error) {
+    logger.error('Server', 'Error during server startup', error);
+    throw error;
+  }
 }
