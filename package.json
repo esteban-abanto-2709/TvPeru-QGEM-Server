@@ -1,11 +1,12 @@
 {
-  "name": "deletreo-server",
+  "name": "AppCenter",
   "version": "1.0.0",
-  "description": "Servidor simple para recibir datos del Google Sheet",
-  "main": "server.js",
+  "description": "Web App Center for tv show",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "dependencies": {
     "dotenv": "^17.2.0",

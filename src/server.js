@@ -1,13 +1,15 @@
-const express = require('express');
+import express from 'express';
+import { logger } from './utils/logger.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware para parsear JSON
+// Middlewares
 app.use(express.json());
 
 // Ruta principal - página simple
 app.get('/', (req, res) => {
+  logger.info('Server', 'Home page requested');
+
   res.send(`
     <!DOCTYPE html>
     <html lang="es">
@@ -38,16 +40,46 @@ app.get('/', (req, res) => {
         <div class="container">
             <h1>✅ Servidor Funcionando</h1>
             <p>El servidor está activo y funcionando correctamente.</p>
-            <p>Puerto: ${PORT}</p>
+            <p>Puerto: ${process.env.PORT || 3000}</p>
             <p>Hora: ${new Date().toLocaleString()}</p>
+            <p>Ambiente: ${process.env.NODE_ENV || 'development'}</p>
         </div>
     </body>
     </html>
   `);
 });
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor iniciado en puerto ${PORT}`);
-  console.log(`🌐 Acceder en: http://localhost:${PORT}`);
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  logger.info('Server', 'Health check requested');
+
+  res.json({
+    success: true,
+    server: {
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development'
+    }
+  });
 });
+
+export async function startServer(port) {
+  return new Promise((resolve, reject) => {
+    try {
+      const server = app.listen(port, () => {
+        logger.info('Server', `Server listening on port ${port}`);
+        resolve(server);
+      });
+
+      server.on('error', (error) => {
+        logger.error('Server', 'Failed to start server', error);
+        reject(error);
+      });
+
+    } catch (error) {
+      logger.error('Server', 'Error creating server', error);
+      reject(error);
+    }
+  });
+}
