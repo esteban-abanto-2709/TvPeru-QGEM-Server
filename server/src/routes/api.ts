@@ -26,7 +26,6 @@ router.post('/save-data/:filename', async (req, res) => {
     }
 
     const result = await JsonStorageService.saveJsonFile(filename, jsonData);
-
     res.json(result);
 
   } catch (error) {
@@ -40,12 +39,10 @@ router.post('/save-data/:filename', async (req, res) => {
 
 // Cargar archivo JSON - SOLO DATOS (para Unity/C#)
 router.get('/load-data/:filename', async (req, res) => {
+  const { filename } = req.params;
+
   try {
-    const { filename } = req.params;
-
     const result = await JsonStorageService.loadJsonFile(filename);
-
-    // Retornar directamente el contenido del campo 'data'
     res.json(result.data);
 
   } catch (error) {
@@ -54,7 +51,7 @@ router.get('/load-data/:filename', async (req, res) => {
         error: `Archivo no encontrado: ${filename}`
       });
     } else {
-      logger.error('API', `Error en load-data/${req.params.filename}`, error);
+      logger.error('API', `Error en load-data/${filename}`, error);
       res.status(500).json({
         error: error.message
       });
@@ -64,11 +61,10 @@ router.get('/load-data/:filename', async (req, res) => {
 
 // Cargar archivo JSON - CON DETALLES (para administración/web)
 router.get('/load-data/details/:filename', async (req, res) => {
+  const { filename } = req.params;
+
   try {
-    const { filename } = req.params;
-
     const result = await JsonStorageService.loadJsonFile(filename);
-
     res.json(result);
 
   } catch (error) {
@@ -78,7 +74,7 @@ router.get('/load-data/details/:filename', async (req, res) => {
         error: error.message
       });
     } else {
-      logger.error('API', `Error en load-data/details/${req.params.filename}`, error);
+      logger.error('API', `Error en load-data/details/${filename}`, error);
       res.status(500).json({
         success: false,
         error: error.message
@@ -104,11 +100,10 @@ router.get('/list-files', async (req, res) => {
 
 // Eliminar archivo
 router.delete('/delete-data/:filename', async (req, res) => {
+  const { filename } = req.params;
+
   try {
-    const { filename } = req.params;
-
     const result = await JsonStorageService.deleteJsonFile(filename);
-
     res.json(result);
 
   } catch (error) {
@@ -118,7 +113,7 @@ router.delete('/delete-data/:filename', async (req, res) => {
         error: error.message
       });
     } else {
-      logger.error('API', `Error en delete-data/${req.params.filename}`, error);
+      logger.error('API', `Error en delete-data/${filename}`, error);
       res.status(500).json({
         success: false,
         error: error.message
