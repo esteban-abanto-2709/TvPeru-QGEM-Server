@@ -23,8 +23,11 @@
     "mongodb",
     "express"
   ],
-  "author": "Esteban Abanto",
-  "license": "UNLICENSED",
+  "author": {
+    "name": "Esteban Abanto Garcia",
+    "email": "esteban.abanto.2709@gmail.com"
+  },
+  "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "repository": {
     "type": "git",
