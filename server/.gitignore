@@ -8,7 +8,7 @@ jspm_packages/
 bower_components/
 
 # Build output
-dist/
+#dist/
 build/
 coverage/
 lib-cov/
