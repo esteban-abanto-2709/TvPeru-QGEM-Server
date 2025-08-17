@@ -9,7 +9,6 @@ bower_components/
 
 # Build output
 dist/
-build/
 coverage/
 lib-cov/
 .nyc_output/
