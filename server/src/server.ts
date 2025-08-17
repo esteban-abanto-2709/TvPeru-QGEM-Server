@@ -35,8 +35,7 @@ app.get('/api/health', async (req, res) => {
       server: {
         status: 'OK',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        environment: process.env.NODE_ENV || 'development'
+        uptime: process.uptime()
       },
       database: {
         connected: true,

@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QGEM App Center - TV Perú</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            max-width: 900px; 
-            margin: 0 auto; 
-            padding: 20px; 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: white;
         }
+
         .container {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
@@ -21,16 +23,28 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        .status { 
+
+        .status {
             display: inline-block;
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            font-weight: bold; 
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
             margin: 10px 0;
         }
-        .status.loading { background-color: #ffc107; color: #000; }
-        .status.success { background-color: #28a745; }
-        .status.error { background-color: #dc3545; }
+
+        .status.loading {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .status.success {
+            background-color: #28a745;
+        }
+
+        .status.error {
+            background-color: #dc3545;
+        }
+
         .endpoint {
             background: rgba(255, 255, 255, 0.2);
             padding: 15px;
@@ -38,22 +52,70 @@
             margin: 10px 0;
             font-family: 'Courier New', monospace;
         }
+
         .endpoint-group {
             margin: 20px 0;
             padding: 15px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
         }
-        h1 { text-align: center; margin-bottom: 30px; }
-        h4 { margin-top: 0; color: #ffd700; }
-        .loading { animation: pulse 2s infinite; }
+
+        .unity-links {
+            margin: 15px 55px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+        }
+
+        .unity-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 8px;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .unity-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h4 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🎬 QGEM App Center</h1>
@@ -61,7 +123,22 @@
             <strong>TV Perú</strong> - "Que Gane El Mejor"<br>
             <small>Sistema centralizado de gestión de juegos</small>
         </p>
-        
+
+        <!-- Enlaces a Unity Builds -->
+        <div class="unity-links">
+            <h3>🎮 Aplicaciones Unity</h3>
+            <div style="text-align: center;">
+                <a href="/unity-builds/data-collector/" class="unity-button" target="_blank">
+                    📝 Data Collector
+                </a>
+                <!-- Aquí se pueden agregar más builds cuando sea necesario -->
+                <!-- <a href="/unity-builds/game-demo/" class="unity-button" target="_blank">🎮 Demo Juego</a> -->
+            </div>
+            <p style="text-align: center; margin-top: 8px; font-size: 14px;">
+                Usa el Data Collector para cargar datos del programa
+            </p>
+        </div>
+
         <div id="server-status">
             <h3>📡 Estado del Servidor:</h3>
             <div class="status loading loading">🔄 Verificando conexiones...</div>
@@ -74,7 +151,7 @@
 
         <div id="endpoints" style="display: none;">
             <h3>🔗 Endpoints Disponibles:</h3>
-            
+
             <div class="endpoint-group">
                 <h4>🎮 Para Unity/C# (Datos directos)</h4>
                 <div class="endpoint">
@@ -115,8 +192,6 @@
         <div id="ready-message" style="display: none; text-align: center; margin-top: 30px;">
             <h2>✅ ¡Sistema Listo!</h2>
             <p>El App Center está funcionando correctamente y conectado a MongoDB.</p>
-            <p><strong>Unity:</strong> Usa <code>/api/load-data/</code> para datos directos</p>
-            <p><strong>Colector:</strong> Usa <code>/api/load-data/details/</code> para gestión completa</p>
         </div>
     </div>
 
@@ -125,14 +200,14 @@
             try {
                 const response = await fetch('/api/health');
                 const data = await response.json();
-                
+
                 const serverStatus = document.getElementById('server-status').querySelector('.status');
                 const databaseStatus = document.getElementById('database-status').querySelector('.status');
-                
+
                 if (data.success) {
                     serverStatus.className = 'status success';
                     serverStatus.textContent = '✅ Servidor activo';
-                    
+
                     if (data.database && data.database.connected) {
                         databaseStatus.className = 'status success';
                         databaseStatus.textContent = '✅ MongoDB conectado';
@@ -140,7 +215,7 @@
                         databaseStatus.className = 'status error';
                         databaseStatus.textContent = '❌ Error de conexión a MongoDB';
                     }
-                    
+
                     if (data.database && data.database.connected) {
                         document.getElementById('endpoints').style.display = 'block';
                         document.getElementById('ready-message').style.display = 'block';
@@ -154,7 +229,7 @@
             } catch (error) {
                 document.getElementById('server-status').querySelector('.status').className = 'status error';
                 document.getElementById('server-status').querySelector('.status').textContent = '❌ Sin respuesta';
-                
+
                 document.getElementById('database-status').querySelector('.status').className = 'status error';
                 document.getElementById('database-status').querySelector('.status').textContent = '❌ Sin conexión';
             }
@@ -162,9 +237,10 @@
 
         // Verificar estado al cargar la página
         checkServerHealth();
-        
-        // Verificar cada 30 segundos para mantener activo
-        setInterval(checkServerHealth, 30000);
+
+        // Verificar cada 2 minutos para mantener activo
+        setInterval(checkServerHealth, 120000);
     </script>
 </body>
+
 </html>
